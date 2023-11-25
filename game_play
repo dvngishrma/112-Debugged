@@ -49,6 +49,18 @@ class Vehicle:
             self.color='red'
         else:
             self.color=colorList[random.randint(0,len(colorList)-1)]
+    def drawCars(self, app):
+        cellLeft, cellTop = getCellLeftTop(app, self.row, self.col)
+        cellWidth, cellHeight = getCellSize(app)
+        numberOfCells=self.length
+        if self.selected==True:
+            drawRect(cellLeft, cellTop, cellWidth*self.dx, cellHeight*self.dy,
+                    fill=self.color, border='white',
+                    borderWidth=app.cellBorderWidth, opacity=50)
+        else:
+            drawRect(cellLeft, cellTop, cellWidth*self.dx, cellHeight*self.dy,
+                    fill=self.color, border='black',
+                    borderWidth=app.cellBorderWidth)
             
             
 
@@ -72,7 +84,7 @@ def redrawAll(app):
 def drawGameState(app,cars):  
     drawBoard(app)
     for car in cars:
-        drawCars(app, car)
+        car.drawCars(app)
     drawBoardBorder(app)
     exitX=app.boardLeft+app.boardWidth
     exitY=app.boardTop+(app.boardHeight/app.rows)*2
@@ -108,18 +120,6 @@ def getCellSize(app):
     cellHeight = app.boardHeight / app.rows
     return (cellWidth, cellHeight)
 
-def drawCars(app, car):
-    cellLeft, cellTop = getCellLeftTop(app, car.row, car.col)
-    cellWidth, cellHeight = getCellSize(app)
-    numberOfCells=car.length
-    if car.selected==True:
-        drawRect(cellLeft, cellTop, cellWidth*car.dx, cellHeight*car.dy,
-                fill=car.color, border='white',
-                borderWidth=app.cellBorderWidth, opacity=50)
-    else:
-        drawRect(cellLeft, cellTop, cellWidth*car.dx, cellHeight*car.dy,
-                fill=car.color, border='black',
-                borderWidth=app.cellBorderWidth)
 
 def onMousePress(app,mouseX,mouseY):
     for car in carList:
@@ -144,7 +144,7 @@ def onKeyPress(app,key):
                 elif key=='up':
                     car.row-=1
 
-
+def isLegalMove(car,)
         
 def main():
     runApp()
