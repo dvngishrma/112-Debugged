@@ -12,7 +12,7 @@ boardList=[[None, None , None, None, None, None],
 
 
 
-otherBoardList=[['A','v',2,1,2],
+carCoords=[['A','v',2,1,2],
                 ['B','v',3,1,4],
                 ['C','v',2,2,5],
                 ['D','h',3,3,0],
@@ -65,7 +65,7 @@ class Vehicle:
             
 
 carList=[]
-for cars in otherBoardList:
+for cars in carCoords:
     carList.append(Vehicle(cars[0],cars[1],cars[2],cars[3],cars[4]))
 
 
@@ -144,8 +144,14 @@ def onKeyPress(app,key):
                 elif key=='up':
                     car.row-=1
 
-def isLegalMove(car,)
-        
+def isLegalMove(car, carList):
+    pass
+
+def unpack(carList):
+    #go from the coordinate list of cars to a 2D board repr
+    pass
+
+
 def main():
     runApp()
 
