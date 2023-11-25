@@ -1,12 +1,6 @@
 from cmu_graphics import *
 import random
 
-boardList=[[None, None , None, None, None, None],
-           [None, None, 'A', None, 'B',None],
-           ['Bug', 'Bug', 'A', None, 'B','C'],
-           ['D', 'D', 'D', None, 'B','C'],
-           ['E', 'F', 'G', None, 'H','H'],
-           ['E', 'F', 'G', None, 'I','I']]
            
 #easy for representation, hard to update, maneuever, will reqiuire things like flatten for moving things around and getting information to the other codes
 
@@ -77,6 +71,8 @@ def onAppStart(app):
     app.boardWidth = 300
     app.boardHeight = 300
     app.cellBorderWidth = 2
+    app.boardList=unpack(app,carList)
+
 
 def redrawAll(app):
     drawGameState(app,carList)
@@ -135,22 +131,62 @@ def onKeyPress(app,key):
         if car.selected==True:
             if car.orientation=='h':
                 if key=='right':
-                    car.col+=1
+                    dx=1
+                    dy=0
                 elif key=='left':
-                    car.col-=1
+                    dx=-1
+                    dy=0
+                else:
+                    dx=0
+                    dy=0
             elif car.orientation=='v':
                 if key=='down':
-                    car.row+=1
+                    dx=0
+                    dy=1
                 elif key=='up':
-                    car.row-=1
+                    dx=0
+                    dy=-1
+                else:
+                    dx=0
+                    dy=0
+            if isLegalMove(app,car, dx ,dy):
+                car.row+=dy
+                car.col+=dx
+                app.boardList=unpack(app,carList)
 
-def isLegalMove(car, carList):
-    pass
+def isLegalMove(app, car, moveX,moveY ):
+    board=app.boardList
+    if moveX in (-1,1):
+        if moveX==1:
+            if (car.col+car.length-1<app.cols-1) and (board[car.row][car.col+car.length]== None):
+                return True
+        else:
+            if (car.col>0) and (board[car.row][car.col-1]== None):
+                return True
+    elif moveY in (-1,1):
+        if moveY==1:
+            if (car.row+car.length-1<app.rows-1) and (board[car.row+car.length][car.col]== None) :
+                return True
+        else:
+            if car.row>0 and (board[car.row-1][car.col]== None):
+                return True
+    elif moveX==0 and moveY==0:
+        return True
+    return False
 
-def unpack(carList):
+def unpack(app,carList):
     #go from the coordinate list of cars to a 2D board repr
-    pass
-
+    board=[]
+    for row in range(app.rows):
+        rowList=[]
+        for col in range(app.cols):
+            rowList.append(None)
+        board.append(rowList)
+    for car in carList:
+        for row in range(car.dy):
+            for col in range(car.dx):
+                board[car.row+row][car.col+col]=car.name
+    return board
 
 def main():
     runApp()
