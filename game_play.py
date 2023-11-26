@@ -1,6 +1,7 @@
 from cmu_graphics import *
 import random
 import copy
+# from game_solver import *
 
 
 
@@ -15,6 +16,7 @@ carCoords=[['A','v',2,1,2],
             ['H','h',2,4,4],
             ['I','h',2,5,4],
             ['Bug','h',2,2,0]]
+
 
 #easy to create the pieces and place them on the board, easy to update row col and move pieces around, solution generator might take some thinky thinky
 
@@ -157,6 +159,9 @@ def onMousePress(app,mouseX,mouseY):
             car.selected=False
 
 def onKeyPress(app,key):
+    if key=='s':
+        solution=solveMyGame(copy.copy(app.boardList),app, copy.copy(app.carList))
+        print(solution)
     if app.gameWon==True:
         if key=='r':
             appBegin(app)
@@ -211,6 +216,54 @@ def isLegalMove(app, car, moveX,moveY ):
     elif moveX==0 and moveY==0:
         return True
     return False
+
+# def solveMyGame(board,app,carList):
+#     if board[2][4]=='Bug' and board[2][5]=='Bug' :
+#         #base case: 'bug' car is in last two cols of third row 
+#         return []
+#     else:
+#         for i in range(len(carList)):
+#             car=carList[i]
+#             for move in (-1,1):
+#                 if car.orientation=='h':
+#                     if isLegalMove(app,car,move,0):
+#                         car.col+=move
+#                         board=unpack(app,carList)
+#                         print(f'tadaa = {board}')
+#                         solution= solveMyGame(board,app,carList)
+#                         if solution!= None:
+#                             return [(car.name, move)]+ solution 
+#                         car.col-=move
+#                         board=unpack(app,carList)
+#                 else:
+#                     if isLegalMove(app,car,0,move):
+#                         car.row+=move
+#                         board=unpack(app,carList)
+#                         print(f'newboard = {board}')
+#                         solution=solveMyGame(board,app,carList)
+#                         if solution!= None:
+#                             return [(car.name, move)]+ solution 
+#                         car.row-=move
+#                         board=unpack(app,carList)               
+#         return None
+
+#dfs will not work 
+#start by implementing bfs and then work to optimise to potentially A*
+    
+    #create a set of all seen before boards
+        # def bfs_search(start_state, goal_state):
+        #     queue = [[start_state]]
+        #     seen_states = set()
+        #     while queue:
+        #         path = queue.pop(0)
+        #         if path[-1] == goal_state:
+        #         return True
+        #         for next_state in get_next_states(path[-1]):
+        #         if next_state not in seen_states:
+        #             seen_states.add(next_state)
+        #             queue.append(path + [next_state])
+        #     return False
+
 
 
 def main():
