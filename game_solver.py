@@ -1,3 +1,5 @@
+from cmu_graphics import *
+from game_play import *
 #solver for rush hour:
 
 #load current board,
@@ -10,6 +12,10 @@
 #if no solution found move on to next direction of movement for car
 #if not possible or no solution then move onto next car
 #lastly return None
+
+def solveMyGame(board, app):
+    #base case: 'bug' car is in last two cols of third row 
+    pass
 
 
 #for board generation:
