@@ -3,6 +3,12 @@ import random
 import copy
 # from game_solver import *
 
+#CODE CITATIONS: used bfs pseudocode from the TP Guide on pathfinding 
+# https://www.cs.cmu.edu/~112/notes/student-tp-guides/Pathfinding.pdf
+
+#used bfs pseudocode from 
+# https://medium.com/swlh/programming-puzzle-rush-hour-traffic-jam-3ee513e6c4ab
+
 
 
 
