@@ -78,6 +78,24 @@ def unpack(app,carList):
 
 def onAppStart(app):
     appBegin(app)
+    
+
+def drawStartScreen(app):
+    drawRect(0,0,app.width,app.height,fill='lightBlue')
+    drawLabel('112-Debugged', app.width/2,app.height/3,size=30, bold=True)
+    drawRect(app.width/2,app.height/2,60,20,fill='black',align='center')
+    drawLabel('PLAY',app.width/2,app.height/2,size=16, fill='white')
+    drawRect(app.width/2,app.height*3/4,90,20,fill='black',align='center')
+    drawLabel('instructions',app.width/2,app.height*3/4,size=16, fill='white')
+
+def drawInstructionScreen(app):
+    drawRect(0,0,app.width,app.height,fill='lightBlue')
+    drawLabel('Click on a car to select it' , app.width/2 ,app.height/2 , size=20)
+    drawLabel('Use the arrow keys to move the car' , app.width/2 ,app.height/2+30 , size=20)
+    drawLabel('Goal is to get the red car next to the exit row' , app.width/2 ,app.height/2+60 , size=20)
+    drawRect(app.width/2,app.height*3/4,90,20,fill='black',align='center')
+    drawLabel('Back',app.width/2,app.height*3/4,size=16, fill='white')
+
 
 def appBegin(app):   
     app.rows = 6
@@ -92,12 +110,19 @@ def appBegin(app):
         app.carList.append(Vehicle(cars[0],cars[1],cars[2],cars[3],cars[4]))
     app.boardList=unpack(app,app.carList)
     app.gameWon=False
+    app.startScreen=True
+    app.instructionScreen=False
+    app.gameScreen=False
     app.moves=0
 
 
 def redrawAll(app):
-    if app.gameWon==False:
+    if app.gameScreen==True:
         drawGameState(app,app.carList)
+    elif app.startScreen==True:
+        drawStartScreen(app)
+    elif app.instructionScreen==True:
+        drawInstructionScreen(app)
     else:
         drawWonState(app)
         
@@ -150,6 +175,17 @@ def getCellSize(app):
 
 
 def onMousePress(app,mouseX,mouseY):
+    if app.startScreen==True:
+        if 170<=mouseX<=230 and 190<=mouseY<=210:
+            app.gameScreen=True
+            app.startScreen=False
+        elif 155<=mouseX<=245 and 290<=mouseY<=310:
+            app.instructionScreen=True
+            app.startScreen=False
+    elif app.instructionScreen==True:
+        if 155<=mouseX<=245 and 290<=mouseY<=310:
+            app.instructionScreen=False
+            app.startScreen=True
     for car in app.carList:
         carLeft,carTop= getCellLeftTop(app, car.row, car.col)
         carWidth, carHeight = getCellSize(app)
@@ -159,13 +195,13 @@ def onMousePress(app,mouseX,mouseY):
             car.selected=False
 
 def onKeyPress(app,key):
-    if key=='s':
-        solution=solveMyGame(copy.copy(app.boardList),app, copy.copy(app.carList))
-        print(solution)
+    # if key=='s':
+    #     solution=solveMyGame(app,copy.deepcopy(app.boardList))
+    #     print(solution)
     if app.gameWon==True:
         if key=='r':
             appBegin(app)
-    else:
+    elif app.gameScreen==True:
         for car in app.carList:
             if car.selected==True:
                 if car.orientation=='h':
@@ -195,6 +231,7 @@ def onKeyPress(app,key):
                     app.boardList=unpack(app,app.carList)
                     if car.name=='Bug' and car.col==4:
                         app.gameWon=True
+                        app.gameScreen=False
     
 
 def isLegalMove(app, car, moveX,moveY ):
@@ -263,8 +300,72 @@ def isLegalMove(app, car, moveX,moveY ):
         #             seen_states.add(next_state)
         #             queue.append(path + [next_state])
         #     return False
+def solveMyGame(app,board):
+    boardQueue=[(0, board)]
+    seenConfigurations=set()
+    seenConfigurations.add(boardListToString(board))
+    mapping={}
+    mapping[boardListToString(board)]=None
+    while boardQueue!=[]:
+        configNum, currentBoard = boardQueue.pop(0)
+        print(configNum)
+        if currentBoard[2][5] =='Bug':
+            print('i reach here')
+            resultList=[]
+            node=boardListToString(currentBoard)
+            for key in mapping:
+                if key==node:
+                    resultList.insert(0,mapping[key])
+                    node=mapping[key]
+                    if node==None:
+                        return resultList
+                    continue
+        for nextConfig in getNeighbour(app,currentBoard):
+            if boardListToString(nextConfig) not in seenConfigurations:
+                print('i got here')
+                seenConfigurations.add(boardListToString(nextConfig))
+                boardQueue.append((configNum+1, nextConfig))
+                print(len(boardQueue))
+                mapping[boardListToString(nextConfig)] = currentBoard
+    return None
+
+def getNeighbour(app,board): #working!!!! yayyy!!!
 
 
+    #loop through all the cars in the board
+    #move each one thats moveable
+    #append this into a list
+    #return to board config
+    #continue loop
+    #return list
+
+
+    neighbourStates=[]
+    for i in range(len(app.carList)):
+            car=app.carList[i]
+            for move in (-1,1):
+                if car.orientation=='h':
+                    if isLegalMove(app,car,move,0):
+                        car.col+=move
+                        newBoard=unpack(app,app.carList)
+                        neighbourStates.append(newBoard)
+                        car.col-=move
+                else:
+                    if isLegalMove(app,car,0,move):
+                        car.row+=move
+                        newBoard=unpack(app,app.carList)
+                        neighbourStates.append(newBoard)
+                        car.row-=move
+    return neighbourStates
+
+def boardListToString(board):
+    result=''
+    for row in range(len(board)):
+        rowstr=''
+        for col in range(len(board)):
+            rowstr+=str(board[row][col])+' '
+        result+=rowstr+'\n'
+    return result
 
 def main():
     runApp()
