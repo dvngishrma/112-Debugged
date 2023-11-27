@@ -1,5 +1,5 @@
 from cmu_graphics import *
-# from game_play import *
+from game_play import *
 #solver for rush hour:
 
 #load current board,
