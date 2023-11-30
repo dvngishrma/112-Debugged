@@ -1,14 +1,6 @@
-from vehicle import *
 from cmu_graphics import *
 import random
 
-
-
-#def hint generator:
-#parse through the path part of solution, find the current board
-#find the path where current board is the second last board
-#take last 2-elements of move index
-#print that into the UI
 
 N = 6
 
@@ -374,7 +366,7 @@ def onStep(app):
 
 def drawSolutionScreen(app, solutionList):
    drawRect(0,0,app.width,app.height,fill='lightBlue')
-   drawRect(0,30,app.width,app.height-10,fill='white',opacity=50)
+   drawRect(0,30,app.width,app.height-60,fill='white',opacity=50)
    drawLabel('MOVES TO SOLVE', app.width/2,40)
    for i in range(0,len(solutionList)-1,2):
       carName=solutionList[i].upper()
@@ -383,8 +375,7 @@ def drawSolutionScreen(app, solutionList):
         drawLabel(f'{carName}: {carDir}',app.width/2-30,60+i*10,size=12, fill='black')
       else:
         drawLabel(f'{carName}: {carDir}',app.width/2+30,60+(i-20)*10,size=12, fill='black')
-   index=len(solutionList)-19
-   drawLabel('Press s to go back to the game', app.width/2,60+index*10,size=12, fill='black')
+   drawLabel('Press s to go back to the game', app.width/2,app.height-50,size=12, fill='black')
 
 def drawHintScreen(app, solutionList):
    drawRect(0,0,app.width,app.height,fill='lightBlue')
