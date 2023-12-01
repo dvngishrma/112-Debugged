@@ -1,5 +1,7 @@
 from cmu_graphics import *
 import random
+from PIL import Image
+import os, pathlib
 
 
 N = 6
@@ -34,9 +36,17 @@ class Vehicle:
         self.dx=1
         self.dy=1
         self.selected=False
-        colorList=['blue','orange','green','pink','yellow','purple']
+        # colorList=['blue','orange','green','pink','yellow','purple']
+        colorList=[gradient('tomato', 'salmon', 'peachPuff',start='left'),
+                   gradient('salmon', 'peachPuff', 'lemonChiffon',start='left'),
+                   gradient('peachPuff', 'lemonChiffon', 'khaki',start='left'),
+                   gradient('lemonChiffon', 'khaki', 'greenYellow',start='left'),
+                   gradient('khaki', 'greenYellow', 'darkCyan',start='left'),
+                   gradient('greenYellow', 'darkCyan', 'mediumTurquoise',start='left'),
+                   gradient('darkCyan', 'mediumTurquoise', 'mediumSlateBlue',start='left'),
+                   gradient('mediumTurquoise', 'mediumSlateBlue', 'mediumVioletRed',start='left')]
         if name=='Bug':
-            self.color='red'
+            self.color=gradient('darkRed', 'fireBrick','crimson',start='left-top')
         else:
             self.color=colorList[random.randint(0,len(colorList)-1)]
     
@@ -104,13 +114,13 @@ class Vehicle:
         numberOfCells=self.length
         if self.selected==True: #if click on the car
             drawRect(cellLeft, cellTop, cellWidth*int(self.dx), cellHeight*int(self.dy),
-                    fill=self.color, border='white',
+                    fill=self.color, border='antiqueWhite',
                     borderWidth=2, opacity=50)
             drawLabel(self.name.upper(), cellLeft+cellWidth*int(self.dx)/2, cellTop+cellHeight*int(self.dy)/2,
                       fill='black', size=12 )
         else:
             drawRect(cellLeft, cellTop, cellWidth*int(self.dx), cellHeight*int(self.dy),
-                    fill=self.color, border='black',
+                    fill=self.color, border='antiqueWhite',
                     borderWidth=2)
             drawLabel(self.name.upper(), cellLeft+cellWidth*int(self.dx)/2, cellTop+cellHeight*int(self.dy)/2,
                       fill='black', size=12 )
@@ -293,21 +303,24 @@ def onAppStart(app):
 
 
 def drawStartScreen(app):
-    drawRect(0,0,app.width,app.height,fill='lightBlue')
-    drawLabel('112-Debugged', app.width/2,app.height/3,size=30, bold=True)
-    drawRect(app.width/2,app.height/2,60,20,fill='black',align='center')
-    drawLabel('PLAY',app.width/2,app.height/2,size=16, fill='white')
-    drawRect(app.width/2,app.height*3/4,90,20,fill='black',align='center')
-    drawLabel('instructions',app.width/2,app.height*3/4,size=16, fill='white')
+    drawImage(app.backgroundImage,0,0)
+    drawRect(0,30,app.width,app.height-60,fill='black',opacity=50)
+    drawLabel('112-Debugged', app.width/2,app.height/3,size=30, bold=True,fill='antiqueWhite')
+    drawRect(app.width/2,app.height/2,60,20,fill='antiqueWhite',align='center')
+    drawLabel('PLAY',app.width/2,app.height/2,size=16, fill='black')
+    drawRect(app.width/2,app.height*3/4,90,20,fill='antiqueWhite',align='center')
+    drawLabel('Instructions',app.width/2,app.height*3/4,size=16, fill='black')
 
 def drawInstructionScreen(app):
-    drawRect(0,0,app.width,app.height,fill='lightBlue')
-    drawLabel('Click on a car to select it' , app.width/2 ,app.height/3 , size=20)
-    drawLabel('Use the arrow keys to move the car' , app.width/2 ,app.height/3+30 , size=20)
-    drawLabel('Goal is to get the red car next to the exit' , app.width/2 ,app.height/3+60 , size=20)
-    drawLabel('Press s to get the solutions' , app.width/2 ,app.height/3+90 , size=20)
-    drawRect(app.width/2,app.height*3/4,90,20,fill='black',align='center')
-    drawLabel('Back',app.width/2,app.height*3/4,size=16, fill='white')
+    drawImage(app.backgroundImage,0,0)
+    drawRect(0,30,app.width,app.height-60,fill='black',opacity=50)
+    drawLabel('Click on a car to select it' , app.width/2 ,app.height/3 , size=20,fill='antiqueWhite')
+    drawLabel('Use the arrow keys to move the car' , app.width/2 ,app.height/3+30 , size=20,fill='antiqueWhite')
+    drawLabel('Goal is to get the red car next to the exit' , app.width/2 ,app.height/3+60 , size=20,fill='antiqueWhite')
+    drawLabel('Press s to get the solutions' , app.width/2 ,app.height/3+90 , size=20,fill='antiqueWhite')
+    drawLabel('Press h to get the next move' , app.width/2 ,app.height/3+120 , size=20,fill='antiqueWhite')
+    drawRect(app.width/2,app.height*3/4,90,20,fill='antiqueWhite',align='center')
+    drawLabel('Back',app.width/2,app.height*3/4,size=16, fill='black')
 
 
 def appBegin(app):   
@@ -328,12 +341,16 @@ def appBegin(app):
     app.levelScreen=False
     app.gameScreen=False
     app.moves=0
-    app.secondsLeft=180
-    #solve every puzzle in 3 mins
+    app.secondsLeft=120
+    #solve every puzzle in 2 mins
     app.gameLost=False
     app.stepsPerSecond=1
     app.solutionScreen=False
     app.hintScreen=False
+    #https://www.pexels.com/photo/motherboard-and-fan-behind-wire-mesh-8108722/
+    app.backgroundImage=Image.open("Background.jpg")
+    app.backgroundImage = CMUImage(app.backgroundImage)
+    
 
 
 def redrawAll(app):
@@ -365,61 +382,68 @@ def onStep(app):
       app.secondsLeft-=1
 
 def drawSolutionScreen(app, solutionList):
-   drawRect(0,0,app.width,app.height,fill='lightBlue')
-   drawRect(0,30,app.width,app.height-60,fill='white',opacity=50)
-   drawLabel('MOVES TO SOLVE', app.width/2,40)
+   drawImage(app.backgroundImage,0,0)
+   drawRect(0,30,app.width,app.height-60,fill='black',opacity=50)
+   drawLabel('MOVES TO SOLVE', app.width/2,40,fill='antiqueWhite',bold=True,size=20)
    for i in range(0,len(solutionList)-1,2):
       carName=solutionList[i].upper()
       carDir=solutionList[i+1]
-      if i<20:
-        drawLabel(f'{carName}: {carDir}',app.width/2-30,60+i*10,size=12, fill='black')
+      if carDir==1:
+         carDir='Forward'
       else:
-        drawLabel(f'{carName}: {carDir}',app.width/2+30,60+(i-20)*10,size=12, fill='black')
-   drawLabel('Press s to go back to the game', app.width/2,app.height-50,size=12, fill='black')
+         carDir='Backward'
+      if i<20:
+        drawLabel(f'{carName}: {carDir}',app.width/2-50,60+i*10,size=12, fill='antiqueWhite')
+      else:
+        drawLabel(f'{carName}: {carDir}',app.width/2+50,60+(i-20)*10,size=12, fill='antiqueWhite')
+   drawLabel('Press s to go back to the game', app.width/2,app.height-50,size=12, fill='antiqueWhite')
 
 def drawHintScreen(app, solutionList):
-   drawRect(0,0,app.width,app.height,fill='lightBlue')
-   drawRect(0,30,app.width,app.height-10,fill='white',opacity=50)
-   drawLabel('NEXT MOVE', app.width/2,app.height/2-20)
+   drawImage(app.backgroundImage,0,0)
+   drawRect(0,30,app.width,app.height-10,fill='black',opacity=50)
+   drawLabel('NEXT MOVE', app.width/2,app.height/2-20,fill='antiqueWhite',bold=True,size=20)
    carName=solutionList[0].upper()
    carDir=solutionList[1]
-   drawLabel(f'{carName}: {carDir}',app.width/2,app.height/2,size=12, fill='black')
-   drawLabel('Press h to go back to the game', app.width/2,app.height/2+50,size=12, fill='black')
+   drawLabel(f'{carName}: {carDir}',app.width/2,app.height/2,size=12, fill='antiqueWhite')
+   drawLabel('Press h to go back to the game', app.width/2,app.height/2+50,size=12, fill='antiqueWhite')
       
    
 def drawLevelScreen(app):
-    drawRect(0,0,app.width,app.height,fill='lightBlue')
+    drawImage(app.backgroundImage,0,0)
     for i in range(3):
-        drawRect(app.width/2,app.height/4*(i+1),60,20,fill='black',align='center')
-    drawLabel('Easy', app.width/2, app.height/4, size=16, fill='white')
-    drawLabel('Medium', app.width/2, app.height/4*2, size=16, fill='white')
-    drawLabel('Hard', app.width/2, app.height/4*3, size=16, fill='white')
+        drawRect(app.width/2,app.height/4*(i+1),60,20,fill='antiqueWhite',align='center')
+    drawLabel('Easy', app.width/2, app.height/4, size=16, fill='black')
+    drawLabel('Medium', app.width/2, app.height/4*2, size=16, fill='black')
+    drawLabel('Hard', app.width/2, app.height/4*3, size=16, fill='black')
         
 def drawGameState(app):  
+    drawImage(app.backgroundImage,0,0)
     drawBoard(app)
     for car in app.carList:
         car.drawCars(app)
     drawBoardBorder(app)
     exitX=app.boardLeft+app.boardWidth
     exitY=app.boardTop+(app.boardHeight/app.rows)*2
-    drawLine(exitX,exitY,exitX,exitY+(app.boardHeight/app.rows),fill='white',lineWidth=10)
+    drawLine(exitX,exitY,exitX,exitY+(app.boardHeight/app.rows),fill='red',lineWidth=5)
     drawLabel('EXIT',exitX+10,exitY+(app.boardHeight/(2*app.rows)), fill='red', rotateAngle=90)
-    drawRect(50,20,70,40,fill=None,border='black')
-    drawLabel('Moves', 85,30,size=12)
-    drawLabel(app.moves,85,45,size=12)
-    drawRect(300,20,70,40,fill=None,border='black')
-    drawLabel('Time Left', 335,30,size=12)
-    drawLabel(app.secondsLeft,335,45,size=12)
+    drawRect(50,20,70,40,fill=None,border='antiqueWhite')
+    drawLabel('Moves', 85,30,size=12,fill='antiqueWhite')
+    drawLabel(app.moves,85,45,size=12,fill='antiqueWhite')
+    drawRect(300,20,70,40,fill=None,border='antiqueWhite')
+    drawLabel('Time Left', 335,30,size=12,fill='antiqueWhite')
+    drawLabel(app.secondsLeft,335,45,size=12,fill='antiqueWhite')
 
 def drawWonState(app):
-    drawRect(0,0,app.width,app.height,fill='lightBlue')
-    drawLabel(f'You won in {app.moves} moves',app.width/2,app.height/2,size=24)
-    drawLabel('press r to replay', app.width/2,app.height/2+30)
+    drawImage(app.backgroundImage,0,0)
+    drawRect(0,30,app.width,app.height-10,fill='black',opacity=50)
+    drawLabel(f'You won in {app.moves} moves',app.width/2,app.height/2,size=24,fill='antiqueWhite',bold=True)
+    drawLabel('Press r to replay', app.width/2,app.height/2+30,fill='antiqueWhite')
 
 def drawLossState(app):
-    drawRect(0,0,app.width,app.height,fill='lightBlue')
-    drawLabel(f'You lost',app.width/2,app.height/2,size=24)
-    drawLabel('press r to replay', app.width/2,app.height/2+30)
+    drawImage(app.backgroundImage,0,0)
+    drawRect(0,30,app.width,app.height-10,fill='black',opacity=50)
+    drawLabel(f'You lost',app.width/2,app.height/2,size=24,fill='antiqueWhite',bold=True)
+    drawLabel('Press r to replay', app.width/2,app.height/2+30,fill='antiqueWhite')
 
 def drawBoard(app):
     for row in range(app.rows):
@@ -429,14 +453,14 @@ def drawBoard(app):
 def drawBoardBorder(app):
   # draw the board outline (with double-thickness):
   drawRect(app.boardLeft, app.boardTop, app.boardWidth, app.boardHeight,
-           fill=None, border='black',
+           fill=None, border='antiqueWhite',
            borderWidth=2*app.cellBorderWidth)
 
 def drawCell(app, row, col):
     cellLeft, cellTop = getCellLeftTop(app, row, col)
     cellWidth, cellHeight = getCellSize(app)
     drawRect(cellLeft, cellTop, cellWidth, cellHeight,
-             fill=None, border='black',
+             fill=None, border='antiqueWhite',
              borderWidth=app.cellBorderWidth)
 
 def getCellLeftTop(app, row, col):
