@@ -1,9 +1,12 @@
 # 112-Debugged
-Rush Hour Game implementation for a Term Project in CMU 15-112
+Rush Hour Game implementation for a Term Project in CMU 15-112:
+
+https://www.thinkfun.com/rush-hour-online-play/
 
 Python Implementation of the popular game Rush Hour, where the red car is a Bug and all the cars are apps on your laptops hard drive.
 
 To run the project, just run the main.py file. For image integration, the file 'Background.jpg' must be in the same folder as main.py.
+
 Graphics are being drawn using the cmu_graphics package, more information on installing the library can be found here:
 https://www.cs.cmu.edu/~112/notes/hw7.html
 
