@@ -6,7 +6,7 @@ import os, pathlib
 
 N = 6
 
-def generateBoard(level,recqdMoves=20):
+def generateBoard(level):
     #take a board with cars on it, see if its solveable  
     # recquires a certain number of moves to solve for a level
     #only then return the board and carList
