@@ -8,7 +8,7 @@ N = 6
 
 def generateBoard(level):
     #take a board with cars on it, see if its solveable  
-    # reequires a certain number of moves to solve for a level
+    # recquires a certain number of moves to solve for a level
     #only then return the board and carList
     if level=='easy':
        reqdMoves=20
@@ -19,7 +19,7 @@ def generateBoard(level):
     while True:
         board, carList = loadBoard()
         moves = solveMyGame(board)
-        if moves!=None and len(moves)==reqdMoves:
+        if moves!=None and reqdMoves<=len(moves)<reqdMoves+10:
            return board, carList
         
 
@@ -331,10 +331,9 @@ def appBegin(app):
     app.boardWidth = 300
     app.boardHeight = 300
     app.cellBorderWidth = 2
-    app.level='easy'
-    board,carList = generateBoard(app.level)
-    app.carList=carList
-    app.boardList=board
+    app.level=''
+    app.carList=[]
+    app.boardList=[]
     app.gameWon=False
     app.startScreen=True
     app.instructionScreen=False
@@ -342,7 +341,11 @@ def appBegin(app):
     app.gameScreen=False
     app.moves=0
     app.secondsLeft=120
-    #solve every puzzle in 2 mins
+    #solve every puzzle given time
+    #updated in onMousePress
+    #easy puzzle 45s
+    #medium 90s
+    #hard 120s
     app.gameLost=False
     app.stepsPerSecond=1
     app.solutionScreen=False
@@ -404,6 +407,10 @@ def drawHintScreen(app, solutionList):
    drawLabel('NEXT MOVE', app.width/2,app.height/2-20,fill='antiqueWhite',bold=True,size=20)
    carName=solutionList[0].upper()
    carDir=solutionList[1]
+   if carDir==1:
+        carDir='Forward'
+   else:
+        carDir='Backward'
    drawLabel(f'{carName}: {carDir}',app.width/2,app.height/2,size=12, fill='antiqueWhite')
    drawLabel('Press h to go back to the game', app.width/2,app.height/2+50,size=12, fill='antiqueWhite')
       
@@ -486,16 +493,19 @@ def onMousePress(app,mouseX,mouseY):
     elif app.levelScreen==True:
         if 170<=mouseX<=230 and 90<=mouseY<=110:
             app.level='easy'
+            app.secondsLeft=45
             app.boardList,app.carList=generateBoard(app.level)
             app.gameScreen=True
             app.levelScreen=False
         elif 170<=mouseX<=230 and 190<=mouseY<=210:
             app.level='medium'
+            app.secondsLeft=90
             app.boardList,app.carList=generateBoard(app.level)
             app.gameScreen=True
             app.levelScreen=False
         elif 170<=mouseX<=230 and 290<=mouseY<=310:
             app.level='hard'
+            app.secondsLeft=120
             app.boardList,app.carList=generateBoard(app.level)
             app.gameScreen=True
             app.levelScreen=False
