@@ -331,8 +331,8 @@ def appBegin(app):
     app.cols = 6
     app.boardLeft = 50
     app.boardTop = 70
-    app.boardWidth = 300
-    app.boardHeight = 300
+    app.boardWidth = app.width-100
+    app.boardHeight = app.height-100
     app.cellBorderWidth = 2
     app.level=''
     app.carList=[]
