@@ -6,7 +6,7 @@ import os, pathlib
 
 N = 6
 
-def generateBoard(level):
+def generateBoard(level,recqdMoves=20):
     #take a board with cars on it, see if its solveable  
     # recquires a certain number of moves to solve for a level
     #only then return the board and carList
@@ -14,6 +14,8 @@ def generateBoard(level):
        reqdMoves=20
     elif level=='medium':
        reqdMoves=30
+    elif level=='continuous':
+       reqdMoves=20
     else:
        reqdMoves=40
     while True:
@@ -314,11 +316,12 @@ def drawStartScreen(app):
 def drawInstructionScreen(app):
     drawImage(app.backgroundImage,0,0)
     drawRect(0,30,app.width,app.height-60,fill='black',opacity=50)
-    drawLabel('Click on a car to select it' , app.width/2 ,app.height/3 , size=20,fill='antiqueWhite')
-    drawLabel('Use the arrow keys to move the car' , app.width/2 ,app.height/3+30 , size=20,fill='antiqueWhite')
-    drawLabel('Goal is to get the red car next to the exit' , app.width/2 ,app.height/3+60 , size=20,fill='antiqueWhite')
-    drawLabel('Press s to get the solutions' , app.width/2 ,app.height/3+90 , size=20,fill='antiqueWhite')
-    drawLabel('Press h to get the next move' , app.width/2 ,app.height/3+120 , size=20,fill='antiqueWhite')
+    drawLabel('Click on a car to select it' , app.width/2 ,app.height/4 , size=20,fill='antiqueWhite')
+    drawLabel('Use the arrow keys to move the car' , app.width/2 ,app.height/4+30 , size=18,fill='antiqueWhite')
+    drawLabel('Goal is to get the red car next to the exit' , app.width/2 ,app.height/4+60 , size=18,fill='antiqueWhite')
+    drawLabel('Press s to get the solutions' , app.width/2 ,app.height/4+90 , size=18,fill='antiqueWhite')
+    drawLabel('Press h to get the next move' , app.width/2 ,app.height/4+120 , size=18,fill='antiqueWhite')
+    drawLabel('Speed Run: solve as many boards in 2 mins' , app.width/2 ,app.height/4+150 , size=18,fill='antiqueWhite')
     drawRect(app.width/2,app.height*3/4,90,20,fill='antiqueWhite',align='center')
     drawLabel('Back',app.width/2,app.height*3/4,size=16, fill='black')
 
@@ -353,7 +356,8 @@ def appBegin(app):
     #https://www.pexels.com/photo/motherboard-and-fan-behind-wire-mesh-8108722/
     app.backgroundImage=Image.open("Background.jpg")
     app.backgroundImage = CMUImage(app.backgroundImage)
-    
+    app.gameCount=0
+   
 
 
 def redrawAll(app):
@@ -374,7 +378,10 @@ def redrawAll(app):
     elif app.gameLost==True:
        drawLossState(app)
     else:
-        drawWonState(app)
+        if app.level!='continuous':
+            drawWonState(app)
+        else: 
+           drawContinue(app)
 
 def onStep(app):
    if app.secondsLeft==0:
@@ -417,11 +424,14 @@ def drawHintScreen(app, solutionList):
    
 def drawLevelScreen(app):
     drawImage(app.backgroundImage,0,0)
-    for i in range(3):
-        drawRect(app.width/2,app.height/4*(i+1),60,20,fill='antiqueWhite',align='center')
-    drawLabel('Easy', app.width/2, app.height/4, size=16, fill='black')
-    drawLabel('Medium', app.width/2, app.height/4*2, size=16, fill='black')
-    drawLabel('Hard', app.width/2, app.height/4*3, size=16, fill='black')
+    for i in range(4):
+        drawRect(app.width/2,app.height/5*(i+1),90,20,fill='antiqueWhite',align='center')
+    drawLabel('Easy', app.width/2, app.height/5, size=16, fill='black')
+    drawLabel('Medium', app.width/2, app.height/5*2, size=16, fill='black')
+    drawLabel('Hard', app.width/2, app.height/5*3, size=16, fill='black')
+    drawLabel('SpeedRun', app.width/2, app.height/5*4, size=16, fill='black')
+    drawRect(app.width/5*4, app.height/5*4,50,20,fill='antiqueWhite',align='center')
+    drawLabel('Back', app.width/5*4, app.height/5*4, size=16, fill='black')
         
 def drawGameState(app):  
     drawImage(app.backgroundImage,0,0)
@@ -446,10 +456,17 @@ def drawWonState(app):
     drawLabel(f'You won in {app.moves} moves',app.width/2,app.height/2,size=24,fill='antiqueWhite',bold=True)
     drawLabel('Press r to replay', app.width/2,app.height/2+30,fill='antiqueWhite')
 
+def drawContinue(app):
+    drawImage(app.backgroundImage,0,0)
+    drawRect(0,30,app.width,app.height-10,fill='black',opacity=50)
+    drawLabel(f'You won {app.gameCount} game(s)',app.width/2,app.height/2,size=24,fill='antiqueWhite',bold=True)
+    drawLabel('Press any key to load next Board', app.width/2,app.height/2+30,fill='antiqueWhite')
+
+
 def drawLossState(app):
     drawImage(app.backgroundImage,0,0)
     drawRect(0,30,app.width,app.height-10,fill='black',opacity=50)
-    drawLabel(f'You lost',app.width/2,app.height/2,size=24,fill='antiqueWhite',bold=True)
+    drawLabel(f'Game Over',app.width/2,app.height/2,size=24,fill='antiqueWhite',bold=True)
     drawLabel('Press r to replay', app.width/2,app.height/2+30,fill='antiqueWhite')
 
 def drawBoard(app):
@@ -491,24 +508,34 @@ def onMousePress(app,mouseX,mouseY):
             app.instructionScreen=True
             app.startScreen=False
     elif app.levelScreen==True:
-        if 170<=mouseX<=230 and 90<=mouseY<=110:
+        if 295<=mouseX<=345 and 310<=mouseY<=330:
+           app.levelScreen=False
+           app.startScreen=True
+        if 155<=mouseX<=245 and 70<=mouseY<=90:
             app.level='easy'
             app.secondsLeft=45
             app.boardList,app.carList=generateBoard(app.level)
             app.gameScreen=True
             app.levelScreen=False
-        elif 170<=mouseX<=230 and 190<=mouseY<=210:
+        elif 155<=mouseX<=245 and 150<=mouseY<=170:
             app.level='medium'
             app.secondsLeft=90
             app.boardList,app.carList=generateBoard(app.level)
             app.gameScreen=True
             app.levelScreen=False
-        elif 170<=mouseX<=230 and 290<=mouseY<=310:
+        elif 155<=mouseX<=245 and 230<=mouseY<=250:
             app.level='hard'
             app.secondsLeft=120
             app.boardList,app.carList=generateBoard(app.level)
             app.gameScreen=True
             app.levelScreen=False
+        elif 155<=mouseX<=245 and 310<=mouseY<=330:
+           app.level='continuous'
+           app.secondsLeft=120
+           app.boardList,app.carList=generateBoard(app.level)
+           app.gameCount+=1
+           app.gameScreen=True
+           app.levelScreen=False
     elif app.instructionScreen==True:
         if 155<=mouseX<=245 and 290<=mouseY<=310:
             app.instructionScreen=False
@@ -523,6 +550,12 @@ def onMousePress(app,mouseX,mouseY):
                 car.selected=False
 
 def onKeyPress(app,key):
+    if app.gameWon==True and app.level=='continuous':
+      app.moves=0
+      app.boardList,app.carList=generateBoard(app.level)
+      app.gameCount+=1
+      app.gameScreen=True
+      app.gameWon=False
     if key=='r':
         #replay
         if app.gameWon==True or app.gameScreen==True or app.gameLost==True:
