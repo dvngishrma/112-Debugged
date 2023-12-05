@@ -446,9 +446,9 @@ def drawGameState(app):
     drawRect(50,20,70,40,fill=None,border='antiqueWhite')
     drawLabel('Moves', 85,30,size=12,fill='antiqueWhite')
     drawLabel(app.moves,85,45,size=12,fill='antiqueWhite')
-    drawRect(300,20,70,40,fill=None,border='antiqueWhite')
-    drawLabel('Time Left', 335,30,size=12,fill='antiqueWhite')
-    drawLabel(app.secondsLeft,335,45,size=12,fill='antiqueWhite')
+    drawRect(280,20,70,40,fill=None,border='antiqueWhite')
+    drawLabel('Time Left', 315,30,size=12,fill='antiqueWhite')
+    drawLabel(app.secondsLeft,315,45,size=12,fill='antiqueWhite')
 
 def drawWonState(app):
     drawImage(app.backgroundImage,0,0)
@@ -501,35 +501,35 @@ def getCellSize(app):
 
 def onMousePress(app,mouseX,mouseY):
     if app.startScreen==True:
-        if 170<=mouseX<=230 and 190<=mouseY<=210:
+        if app.width/2-30<=mouseX<=app.width/2+30 and app.height/2-10<=mouseY<=app.height/2+10:
             app.levelScreen=True
             app.startScreen=False
-        elif 155<=mouseX<=245 and 290<=mouseY<=310:
+        elif app.width/2-45<=mouseX<=app.width/2+45 and app.height*3/4-10<=mouseY<=app.height*3/4+10:
             app.instructionScreen=True
             app.startScreen=False
     elif app.levelScreen==True:
-        if 295<=mouseX<=345 and 310<=mouseY<=330:
+        if app.width/5*4-25<=mouseX<=app.width/5*4+25 and app.height/5*4-10<=mouseY<=app.height/5*4+10:
            app.levelScreen=False
            app.startScreen=True
-        if 155<=mouseX<=245 and 70<=mouseY<=90:
+        if app.width/2-45<=mouseX<=app.width/2+45 and app.height/5-10<=mouseY<=app.height/5+10:
             app.level='easy'
             app.secondsLeft=45
             app.boardList,app.carList=generateBoard(app.level)
             app.gameScreen=True
             app.levelScreen=False
-        elif 155<=mouseX<=245 and 150<=mouseY<=170:
+        elif app.width/2-45<=mouseX<=app.width/2+45 and app.height/5*2-10<=mouseY<=app.height/5*2+10:
             app.level='medium'
             app.secondsLeft=90
             app.boardList,app.carList=generateBoard(app.level)
             app.gameScreen=True
             app.levelScreen=False
-        elif 155<=mouseX<=245 and 230<=mouseY<=250:
+        elif app.width/2-45<=mouseX<=app.width/2+45 and app.height/5*3-10<=mouseY<=app.height/5*3+10:
             app.level='hard'
             app.secondsLeft=120
             app.boardList,app.carList=generateBoard(app.level)
             app.gameScreen=True
             app.levelScreen=False
-        elif 155<=mouseX<=245 and 310<=mouseY<=330:
+        elif app.width/2-45<=mouseX<=app.width/2+45 and app.height/5*4-10<=mouseY<=app.height/5*4+10:
            app.level='continuous'
            app.secondsLeft=120
            app.boardList,app.carList=generateBoard(app.level)
@@ -537,7 +537,7 @@ def onMousePress(app,mouseX,mouseY):
            app.gameScreen=True
            app.levelScreen=False
     elif app.instructionScreen==True:
-        if 155<=mouseX<=245 and 290<=mouseY<=310:
+        if app.width/2-45<=mouseX<=app.width/2+45 and app.height*3/4-10<=mouseY<=app.height*3/4+10:
             app.instructionScreen=False
             app.startScreen=True
     elif app.gameScreen==True:
