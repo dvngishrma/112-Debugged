@@ -203,6 +203,8 @@ def isSolved(board):
 
 def getNeighbors(board):
   #CITATIONS: https://replit.com/@KLde/RushHourTrafficJamSolver#main.py
+  #generate all possible next board configuarions from the current
+  #node generation for BFS
 
   seenChars = set(['.'])
   neighborBoards = []
@@ -281,6 +283,7 @@ def solveMyGame(board):
 
 
 def isLegalMove(car, moveX,moveY,board ):
+    #check nextCell within bounds and is Empty
     if moveX in (-1,1):
         if moveX==1: #if moving right, check immediate right cell is empty and within bounds
             if (car.startCol+car.length-1<5) and (board[car.startRow][car.startCol+car.length]== '.'):
@@ -305,6 +308,7 @@ def onAppStart(app):
 
 
 def drawStartScreen(app):
+    #start Screen
     drawImage(app.backgroundImage,0,0)
     drawRect(0,30,app.width,app.height-60,fill='black',opacity=50)
     drawLabel('112-Debugged', app.width/2,app.height/3,size=30, bold=True,fill='antiqueWhite')
@@ -314,6 +318,7 @@ def drawStartScreen(app):
     drawLabel('Instructions',app.width/2,app.height*3/4,size=16, fill='black')
 
 def drawInstructionScreen(app):
+    #instruction screen
     drawImage(app.backgroundImage,0,0)
     drawRect(0,30,app.width,app.height-60,fill='black',opacity=50)
     drawLabel('Click on a car to select it' , app.width/2 ,app.height/4 , size=20,fill='antiqueWhite')
@@ -327,6 +332,7 @@ def drawInstructionScreen(app):
 
 
 def appBegin(app):   
+    #wrapper onAppStart
     app.rows = 6
     app.cols = 6
     app.boardLeft = 50
@@ -384,6 +390,7 @@ def redrawAll(app):
            drawContinue(app)
 
 def onStep(app):
+   #timer manipulation
    if app.secondsLeft==0:
       #if time runs out, you lose
       app.gameScreen=False
@@ -392,6 +399,7 @@ def onStep(app):
       app.secondsLeft-=1
 
 def drawSolutionScreen(app, solutionList):
+   #solutions listed out
    drawImage(app.backgroundImage,0,0)
    drawRect(0,30,app.width,app.height-60,fill='black',opacity=50)
    drawLabel('MOVES TO SOLVE', app.width/2,40,fill='antiqueWhite',bold=True,size=20)
@@ -409,6 +417,7 @@ def drawSolutionScreen(app, solutionList):
    drawLabel('Press s to go back to the game', app.width/2,app.height-50,size=12, fill='antiqueWhite')
 
 def drawHintScreen(app, solutionList):
+   #give next move
    drawImage(app.backgroundImage,0,0)
    drawRect(0,30,app.width,app.height-10,fill='black',opacity=50)
    drawLabel('NEXT MOVE', app.width/2,app.height/2-20,fill='antiqueWhite',bold=True,size=20)
@@ -423,6 +432,7 @@ def drawHintScreen(app, solutionList):
       
    
 def drawLevelScreen(app):
+    #add buttons for levels
     drawImage(app.backgroundImage,0,0)
     for i in range(4):
         drawRect(app.width/2,app.height/5*(i+1),90,20,fill='antiqueWhite',align='center')
@@ -434,6 +444,7 @@ def drawLevelScreen(app):
     drawLabel('Back', app.width/5*4, app.height/5*4, size=16, fill='black')
         
 def drawGameState(app):  
+    #draw the game
     drawImage(app.backgroundImage,0,0)
     drawBoard(app)
     for car in app.carList:
@@ -451,12 +462,14 @@ def drawGameState(app):
     drawLabel(app.secondsLeft,315,45,size=12,fill='antiqueWhite')
 
 def drawWonState(app):
+    #if game Won
     drawImage(app.backgroundImage,0,0)
     drawRect(0,30,app.width,app.height-10,fill='black',opacity=50)
     drawLabel(f'You won in {app.moves} moves',app.width/2,app.height/2,size=24,fill='antiqueWhite',bold=True)
     drawLabel('Press r to replay', app.width/2,app.height/2+30,fill='antiqueWhite')
 
 def drawContinue(app):
+    #if in continuos mode
     drawImage(app.backgroundImage,0,0)
     drawRect(0,30,app.width,app.height-10,fill='black',opacity=50)
     drawLabel(f'You won {app.gameCount} game(s)',app.width/2,app.height/2,size=24,fill='antiqueWhite',bold=True)
@@ -464,12 +477,15 @@ def drawContinue(app):
 
 
 def drawLossState(app):
+    #if gameOver
     drawImage(app.backgroundImage,0,0)
     drawRect(0,30,app.width,app.height-10,fill='black',opacity=50)
     drawLabel(f'Game Over',app.width/2,app.height/2,size=24,fill='antiqueWhite',bold=True)
     drawLabel('Press r to replay', app.width/2,app.height/2+30,fill='antiqueWhite')
 
 def drawBoard(app):
+    #from CMU CS Academy: https://academy.cs.cmu.edu/notes/5504
+
     for row in range(app.rows):
         for col in range(app.cols):
             drawCell(app, row, col)
@@ -481,6 +497,7 @@ def drawBoardBorder(app):
            borderWidth=2*app.cellBorderWidth)
 
 def drawCell(app, row, col):
+    #draw individual cell
     cellLeft, cellTop = getCellLeftTop(app, row, col)
     cellWidth, cellHeight = getCellSize(app)
     drawRect(cellLeft, cellTop, cellWidth, cellHeight,
@@ -488,12 +505,14 @@ def drawCell(app, row, col):
              borderWidth=app.cellBorderWidth)
 
 def getCellLeftTop(app, row, col):
+    #get cell coordinates
     cellWidth, cellHeight = getCellSize(app)
     cellLeft = app.boardLeft + col * cellWidth
     cellTop = app.boardTop + row * cellHeight
     return (cellLeft, cellTop)
 
 def getCellSize(app):
+    #get cell width and height
     cellWidth = app.boardWidth / app.cols
     cellHeight = app.boardHeight / app.rows
     return (cellWidth, cellHeight)
@@ -501,35 +520,44 @@ def getCellSize(app):
 
 def onMousePress(app,mouseX,mouseY):
     if app.startScreen==True:
+        #if on start page
         if app.width/2-30<=mouseX<=app.width/2+30 and app.height/2-10<=mouseY<=app.height/2+10:
+            #if click PLAY
             app.levelScreen=True
             app.startScreen=False
         elif app.width/2-45<=mouseX<=app.width/2+45 and app.height*3/4-10<=mouseY<=app.height*3/4+10:
+            #if click Instructions
             app.instructionScreen=True
             app.startScreen=False
     elif app.levelScreen==True:
+        #if on level Page
         if app.width/5*4-25<=mouseX<=app.width/5*4+25 and app.height/5*4-10<=mouseY<=app.height/5*4+10:
+           #if click BACK
            app.levelScreen=False
            app.startScreen=True
         if app.width/2-45<=mouseX<=app.width/2+45 and app.height/5-10<=mouseY<=app.height/5+10:
+            #if click easy
             app.level='easy'
             app.secondsLeft=45
             app.boardList,app.carList=generateBoard(app.level)
             app.gameScreen=True
             app.levelScreen=False
         elif app.width/2-45<=mouseX<=app.width/2+45 and app.height/5*2-10<=mouseY<=app.height/5*2+10:
+            #if click medium
             app.level='medium'
             app.secondsLeft=90
             app.boardList,app.carList=generateBoard(app.level)
             app.gameScreen=True
             app.levelScreen=False
         elif app.width/2-45<=mouseX<=app.width/2+45 and app.height/5*3-10<=mouseY<=app.height/5*3+10:
+            #if click hard
             app.level='hard'
             app.secondsLeft=120
             app.boardList,app.carList=generateBoard(app.level)
             app.gameScreen=True
             app.levelScreen=False
         elif app.width/2-45<=mouseX<=app.width/2+45 and app.height/5*4-10<=mouseY<=app.height/5*4+10:
+           #if click speed Run
            app.level='continuous'
            app.secondsLeft=120
            app.boardList,app.carList=generateBoard(app.level)
@@ -537,11 +565,15 @@ def onMousePress(app,mouseX,mouseY):
            app.gameScreen=True
            app.levelScreen=False
     elif app.instructionScreen==True:
+        #if on instruction page click BACK
         if app.width/2-45<=mouseX<=app.width/2+45 and app.height*3/4-10<=mouseY<=app.height*3/4+10:
             app.instructionScreen=False
             app.startScreen=True
     elif app.gameScreen==True:
+        #if playing game
         for car in app.carList:
+            #if click within a car not(select) it
+            #if click anywhere else unselect current selection
             carLeft,carTop= getCellLeftTop(app, car.startRow, car.startCol)
             carWidth, carHeight = getCellSize(app)
             if carLeft<=mouseX<=carLeft+(carWidth*car.dx) and carTop<=mouseY<=carTop+(carHeight*car.dy):
@@ -551,6 +583,7 @@ def onMousePress(app,mouseX,mouseY):
 
 def onKeyPress(app,key):
     if app.gameWon==True and app.level=='continuous':
+      #press any key to continue when mode=SpeedRun
       app.moves=0
       app.boardList,app.carList=generateBoard(app.level)
       app.gameCount+=1
@@ -570,6 +603,7 @@ def onKeyPress(app,key):
             else:
                app.gameScreen=True
         if key=='h':
+           #hint Generator
            app.hintScreen=not app.hintScreen
            if app.hintScreen==True:
               app.gameScreen=False
