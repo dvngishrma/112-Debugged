@@ -421,13 +421,14 @@ def drawHintScreen(app, solutionList):
    drawImage(app.backgroundImage,0,0)
    drawRect(0,30,app.width,app.height-10,fill='black',opacity=50)
    drawLabel('NEXT MOVE', app.width/2,app.height/2-20,fill='antiqueWhite',bold=True,size=20)
-   carName=solutionList[0].upper()
-   carDir=solutionList[1]
-   if carDir==1:
-        carDir='Forward'
-   else:
-        carDir='Backward'
-   drawLabel(f'{carName}: {carDir}',app.width/2,app.height/2,size=12, fill='antiqueWhite')
+   if len(solutionList)>=1:
+      carName=solutionList[0].upper()
+      carDir=solutionList[1]
+      if carDir==1:
+            carDir='Forward'
+      else:
+            carDir='Backward'
+      drawLabel(f'{carName}: {carDir}',app.width/2,app.height/2,size=12, fill='antiqueWhite')
    drawLabel('Press h to go back to the game', app.width/2,app.height/2+50,size=12, fill='antiqueWhite')
       
    
